@@ -1,36 +1,18 @@
 package main
 
 import (
-	"fmt"
 	"log"
-	"net"
-	"strings"
+
+	"github.com/samallen659/ccWebServer/internal/server"
 )
 
 func main() {
-	addr, _ := net.ResolveTCPAddr("tcp", "localhost:8080")
-	svr, _ := net.ListenTCP("tcp", addr)
-	for {
-		conn, err := svr.AcceptTCP()
-		if err != nil {
-			log.Fatal(err)
-		}
-
-		go handleConnection(conn)
-	}
-}
-
-func handleConnection(conn *net.TCPConn) {
-	defer conn.Close()
-
-	b := make([]byte, 4096)
-	_, err := conn.Read(b)
+	svr, err := server.NewServer("localhost:8080")
 	if err != nil {
-		//TODO: write http error response
-		return
+		log.Panic(err)
 	}
 
-	reqStr := string(b)
-	fLine := strings.Split(reqStr, "\n")[0]
-	fmt.Println(fLine)
+	if err := svr.Listen(); err != nil {
+		log.Panic(err)
+	}
 }
