@@ -1,10 +1,10 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
 	"log"
 	"net"
+	"strings"
 )
 
 func main() {
@@ -16,11 +16,21 @@ func main() {
 			log.Fatal(err)
 		}
 
-		b, err := bufio.NewReader(conn).ReadString('\n')
-		if err != nil {
-			log.Fatalf("Failed to read conn: %s", err.Error())
-		}
-		fmt.Println(string(b))
-		conn.Close()
+		go handleConnection(conn)
 	}
+}
+
+func handleConnection(conn *net.TCPConn) {
+	defer conn.Close()
+
+	b := make([]byte, 4096)
+	_, err := conn.Read(b)
+	if err != nil {
+		//TODO: write http error response
+		return
+	}
+
+	reqStr := string(b)
+	fLine := strings.Split(reqStr, "\n")[0]
+	fmt.Println(fLine)
 }
