@@ -3,13 +3,9 @@ package server
 import (
 	"errors"
 	"fmt"
-	"regexp"
-	"strings"
-
 	"golang.org/x/exp/slices"
+	"strings"
 )
-
-var PATH_REGEX = `^\/(?!.*\/\/)([a-zA-Z-\/]+)$`
 
 type HTTPMethod string
 
@@ -43,15 +39,12 @@ func NewHeader(headStr string) (*Header, error) {
 		return nil, errors.New("Invalid HTTP Method")
 	}
 
-	validPath := regexp.MustCompile(PATH_REGEX)
 	path := fLine[1]
-	if !validPath.Match([]byte(path)) {
-		return nil, errors.New("Invalid URL Path")
-	}
 
 	fields := make(map[string]string)
 	for i := 1; i < len(lines); i++ {
-		field := strings.Split(lines[i], ":")
+		field := strings.Split(lines[i], ": ")
+		fmt.Println(field)
 		if len(field) != 2 {
 			return nil, errors.New("Invalid Field")
 		}
