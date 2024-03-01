@@ -19,18 +19,18 @@ const (
 
 var HTTP_METHODS = []HTTPMethod{HTTP_GET, HTTP_POST, HTTP_HEAD, HTTP_DELETE, HTTP_PATCH}
 
-type Header struct {
+type RequestHeader struct {
 	Method     HTTPMethod
 	Path       string
 	Additional map[string]string
 }
 
 type Request struct {
-	Header *Header
+	Header *RequestHeader
 	Body   string
 }
 
-func NewHeader(headStr string) (*Header, error) {
+func NewHeader(headStr string) (*RequestHeader, error) {
 	lines := strings.Split(headStr, "\n")
 	fLine := strings.Split(lines[0], " ")
 
@@ -51,7 +51,7 @@ func NewHeader(headStr string) (*Header, error) {
 		fields[field[0]] = field[1]
 	}
 
-	return &Header{
+	return &RequestHeader{
 		Method:     method,
 		Path:       path,
 		Additional: fields,
