@@ -44,7 +44,6 @@ func NewHeader(headStr string) (*RequestHeader, error) {
 	fields := make(map[string]string)
 	for i := 1; i < len(lines); i++ {
 		field := strings.Split(lines[i], ": ")
-		fmt.Println(field)
 		if len(field) != 2 {
 			return nil, errors.New("Invalid Field")
 		}

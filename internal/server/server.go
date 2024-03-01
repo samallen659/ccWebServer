@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log"
 	"net"
-	"strings"
 )
 
 type Server struct {
@@ -38,14 +37,22 @@ func (s *Server) Listen() error {
 func handleConnection(conn *net.TCPConn) {
 	defer conn.Close()
 
-	b := make([]byte, 4096)
+	b := make([]byte, 1024)
 	_, err := conn.Read(b)
 	if err != nil {
+		log.Println(err)
 		//TODO: write http error response
 		return
 	}
 
 	reqStr := string(b)
-	fLine := strings.Split(reqStr, "\n")[0]
-	fmt.Println(fLine)
+
+	req, err := NewRequest(reqStr)
+	if err != nil {
+		log.Println(err)
+		//TODO: write http error response
+		return
+	}
+
+	fmt.Println(req)
 }
