@@ -37,7 +37,7 @@ func (s *Server) Listen() error {
 func handleConnection(conn *net.TCPConn) {
 	defer conn.Close()
 
-	b := make([]byte, 1024)
+	b := make([]byte, 4096)
 	_, err := conn.Read(b)
 	if err != nil {
 		log.Println(err)
@@ -54,5 +54,9 @@ func handleConnection(conn *net.TCPConn) {
 		return
 	}
 
-	fmt.Println(req)
+	res := NewResponse()
+	res.SetStatus(HTTP_OK)
+	res.SetBody(fmt.Sprintf("Requested Path: %s\n", req.Header.Path))
+
+	conn.Write(res.Marshall())
 }
