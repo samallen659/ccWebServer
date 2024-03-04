@@ -30,7 +30,7 @@ type Request struct {
 	Body   string
 }
 
-func NewHeader(headStr string) (*RequestHeader, error) {
+func NewRequestHeader(headStr string) (*RequestHeader, error) {
 	lines := strings.Split(headStr, "\n")
 	fLine := strings.Split(lines[0], " ")
 
@@ -63,7 +63,7 @@ func NewRequest(reqStr string) (*Request, error) {
 		return nil, errors.New("Invalid HTTP Request")
 	}
 
-	header, err := NewHeader(components[0])
+	header, err := NewRequestHeader(components[0])
 	if err != nil {
 		return nil, fmt.Errorf("Error creating header: %s", err.Error())
 	}
