@@ -7,16 +7,22 @@ import (
 )
 
 type Server struct {
-	addr *net.TCPAddr
+	addr   *net.TCPAddr
+	router *Router
 }
 
-func NewServer(addrStr string) (*Server, error) {
+func NewServer(addrStr string, wwwPath string) (*Server, error) {
 	addr, err := net.ResolveTCPAddr("tcp", "localhost:8080")
 	if err != nil {
 		return nil, err
 	}
 
-	return &Server{addr}, nil
+	r, err := NewRouter(wwwPath)
+	if err != nil {
+		return nil, err
+	}
+
+	return &Server{addr, r}, nil
 }
 
 func (s *Server) Listen() error {
