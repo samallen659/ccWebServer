@@ -5,19 +5,31 @@ import (
 	"log"
 	"os"
 
+	"github.com/samallen659/ccWebServer/internal/configuration"
 	"github.com/samallen659/ccWebServer/internal/server"
+	"gopkg.in/yaml.v2"
 )
 
 func main() {
-	root, err := os.Getwd()
+	wd, err := os.Getwd()
 	if err != nil {
-		log.Panic(err)
+		log.Panicf("Failed accessing working dir: %s", err.Error())
 	}
 
-	wwwPath := fmt.Sprintf("%s/www", root)
-	svr, err := server.NewServer("localhost:8080", wwwPath)
+	cb, err := os.ReadFile(fmt.Sprintf("%s/config.yaml", wd))
 	if err != nil {
-		log.Panic(err)
+		log.Panicf("Failed reading config file: %s", err.Error())
+	}
+
+	var config configuration.Config
+	err = yaml.Unmarshal(cb, &config)
+	if err != nil {
+		log.Panicf("Failed Unmarshalling yaml file into config struct: %s", err.Error())
+	}
+
+	svr, err := server.NewServer(config.ListenAddr, config.WWWPath)
+	if err != nil {
+		log.Panicf("Failed creating server: %s", err.Error())
 	}
 
 	if err := svr.Listen(); err != nil {
