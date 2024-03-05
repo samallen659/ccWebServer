@@ -3,9 +3,14 @@ package server
 import (
 	"errors"
 	"fmt"
-	"golang.org/x/exp/slices"
+	"log"
+	"regexp"
 	"strings"
+
+	"golang.org/x/exp/slices"
 )
+
+var fileRegex = regexp.MustCompile(`&*([a-zA-Z]*).html`)
 
 type HTTPMethod string
 
@@ -22,6 +27,7 @@ var HTTP_METHODS = []HTTPMethod{HTTP_GET, HTTP_POST, HTTP_HEAD, HTTP_DELETE, HTT
 type RequestHeader struct {
 	Method     HTTPMethod
 	Path       string
+	File       string
 	Additional map[string]string
 }
 
@@ -40,6 +46,12 @@ func NewRequestHeader(headStr string) (*RequestHeader, error) {
 	}
 
 	path := fLine[1]
+	file := ""
+	if fileRegex.Match([]byte(path)) {
+		log.Println("Requested path contains file")
+		path, file := parsePathAndFile(path)
+		log.Printf("Parsed path to %s and file %s", path, file)
+	}
 
 	fields := make(map[string]string)
 	for i := 1; i < len(lines); i++ {
@@ -53,6 +65,7 @@ func NewRequestHeader(headStr string) (*RequestHeader, error) {
 	return &RequestHeader{
 		Method:     method,
 		Path:       path,
+		File:       file,
 		Additional: fields,
 	}, nil
 }
@@ -72,4 +85,10 @@ func NewRequest(reqStr string) (*Request, error) {
 		Header: header,
 		Body:   components[1],
 	}, nil
+}
+
+func parsePathAndFile(p string) (string, string) {
+	i := fileRegex.FindIndex([]byte(p))
+
+	return p[:i[0]-1], p[i[0]:]
 }
