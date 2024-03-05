@@ -22,13 +22,13 @@ type ResponseHeader struct {
 }
 
 type Response struct {
-	Header ResponseHeader
+	Header *ResponseHeader
 	Body   string
 }
 
 func NewResponse() *Response {
 	return &Response{
-		ResponseHeader{},
+		&ResponseHeader{},
 		"",
 	}
 }
@@ -38,7 +38,7 @@ func (r *Response) SetStatus(status HTTPStatus) error {
 		return errors.New("Invalid HTTP Status")
 	}
 
-	r.Header.Status = status
+	r.Header.Status = 200
 	return nil
 }
 
@@ -52,6 +52,7 @@ func (r *Response) SetBody(body string) {
 
 func (r *Response) Marshall() []byte {
 	var b bytes.Buffer
+	fmt.Println(r.Header.Status)
 	b.Write([]byte(fmt.Sprintf("HTTP/1.1 %d OK\r\n\r\n", r.Header.Status)))
 	b.Write([]byte(r.Body))
 
