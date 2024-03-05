@@ -36,11 +36,11 @@ func (s *Server) Listen() error {
 			log.Fatal(err)
 		}
 
-		go handleConnection(conn)
+		go s.handleConnection(conn)
 	}
 }
 
-func handleConnection(conn *net.TCPConn) {
+func (s *Server) handleConnection(conn *net.TCPConn) {
 	defer conn.Close()
 
 	b := make([]byte, 4096)
@@ -61,8 +61,11 @@ func handleConnection(conn *net.TCPConn) {
 	}
 
 	res := NewResponse()
-	res.SetStatus(HTTP_OK)
-	res.SetBody(fmt.Sprintf("Requested Path: %s\n", req.Header.Path))
+
+	s.router.RouteRequest(req, res)
+
+	response := res.Marshall()
+	fmt.Println(string(response))
 
 	conn.Write(res.Marshall())
 }
