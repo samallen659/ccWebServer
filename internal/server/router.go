@@ -1,10 +1,13 @@
 package server
 
 import (
+	"errors"
 	"fmt"
 	"io/fs"
 	"log"
+	"os"
 	"path/filepath"
+	"strings"
 )
 
 type Router struct {
@@ -39,4 +42,51 @@ func (r *Router) WalkRoutes() error {
 		return err
 	}
 	return nil
+}
+
+func (r *Router) RouteRequest(req *Request, resp *Response) {
+	route, err := r.MatchRoute(req.Header.Path)
+	if err != nil {
+		log.Println(err)
+		//TODO: write error response
+		return
+	}
+
+	var html string
+	if req.Header.File == "" {
+		file := fmt.Sprintf("%s/index.html", route)
+		b, err := os.ReadFile(file)
+		if err != nil {
+			log.Printf("Failed reading file: %s. Error: %s", file, err.Error())
+			//TODO: write error response
+			return
+		}
+		html = string(b)
+	} else {
+		file := fmt.Sprintf("%s/%s", route, req.Header.File)
+		b, err := os.ReadFile(file)
+		if err != nil {
+			log.Printf("Failed reading file: %s. Error: %s", file, err.Error())
+			//TODO: write error response
+			return
+		}
+		html = string(b)
+	}
+
+	resp.SetBody(html)
+	resp.SetStatus(HTTP_OK)
+	fmt.Println(resp.Header)
+	return
+}
+
+func (r *Router) MatchRoute(route string) (string, error) {
+	fmt.Println(route)
+	for _, rr := range r.Routes {
+		if route == strings.TrimPrefix(rr, r.wwwPath) {
+			log.Printf("Route matched: %s", rr)
+			return rr, nil
+		}
+	}
+
+	return "", errors.New("Failed to match provided route")
 }
