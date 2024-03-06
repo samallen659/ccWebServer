@@ -1,0 +1,3 @@
+listenAddr: #address with port, eg: localhost:8080
+wwwPath: #full path to www folder, eg: /Users/admin/ccWebServer/www
+
