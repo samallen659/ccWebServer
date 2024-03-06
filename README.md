@@ -6,10 +6,9 @@ This is my implementation of the Web Server project from [Coding Challenges](htt
 
 To build the Web Server use the following command
 
-'''bash
+```bash
 go build -o ccWebServer ./cmd/main.go
-'''
-
+```
 ## Configuration
 
 The Web Server takes the running address and then www directory path from a config.yaml file.
@@ -21,6 +20,6 @@ The config.yaml file must be kept in the location that the binary is being run f
 
 After building the binary, setting up the www directory in your location of choice and configuring the config.yaml file run the command below to start the server.
 
-'''bash
+```bash
 ./ccWebServer
-'''
+```
