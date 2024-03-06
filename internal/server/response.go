@@ -11,10 +11,13 @@ import (
 type HTTPStatus int
 
 const (
-	HTTP_OK HTTPStatus = 200
+	HTTP_OK                   HTTPStatus = 200
+	HTTP_BAD_REQUEST          HTTPStatus = 400
+	HTTP_NOT_FOUND            HTTPStatus = 404
+	HTTP_INTERNAL_SEVER_ERROR HTTPStatus = 500
 )
 
-var HTTPStatuses = []HTTPStatus{HTTP_OK}
+var HTTPStatuses = []HTTPStatus{HTTP_OK, HTTP_NOT_FOUND, HTTP_INTERNAL_SEVER_ERROR}
 
 type ResponseHeader struct {
 	Status     HTTPStatus
@@ -38,7 +41,7 @@ func (r *Response) SetStatus(status HTTPStatus) error {
 		return errors.New("Invalid HTTP Status")
 	}
 
-	r.Header.Status = 200
+	r.Header.Status = status
 	return nil
 }
 
