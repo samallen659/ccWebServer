@@ -49,9 +49,11 @@ func NewRequestHeader(headStr string) (*RequestHeader, error) {
 	file := ""
 	if fileRegex.Match([]byte(path)) {
 		log.Println("Requested path contains file")
-		path, file := parsePathAndFile(path)
+		path, file = parsePathAndFile(path)
 		log.Printf("Parsed path to %s and file %s", path, file)
 	}
+
+	path = strings.TrimSuffix(path, "/")
 
 	fields := make(map[string]string)
 	for i := 1; i < len(lines); i++ {
