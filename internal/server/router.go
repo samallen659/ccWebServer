@@ -80,7 +80,9 @@ func (r *Router) RouteRequest(req *Request, resp *Response) {
 }
 
 func (r *Router) MatchRoute(route string) (string, error) {
-	fmt.Println(route)
+	if route == "/" {
+		return r.wwwPath, nil
+	}
 	for _, rr := range r.Routes {
 		if route == strings.TrimPrefix(rr, r.wwwPath) {
 			log.Printf("Route matched: %s", rr)
