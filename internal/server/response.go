@@ -55,7 +55,6 @@ func (r *Response) SetBody(body string) {
 
 func (r *Response) Marshall() []byte {
 	var b bytes.Buffer
-	fmt.Println(r.Header.Status)
 	b.Write([]byte(fmt.Sprintf("HTTP/1.1 %d OK\r\n\r\n", r.Header.Status)))
 	b.Write([]byte(r.Body))
 

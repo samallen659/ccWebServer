@@ -65,8 +65,5 @@ func (s *Server) handleConnection(conn *net.TCPConn) {
 
 	s.router.RouteRequest(req, res)
 
-	response := res.Marshall()
-	fmt.Println(string(response))
-
 	conn.Write(res.Marshall())
 }

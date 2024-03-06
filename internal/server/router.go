@@ -75,7 +75,6 @@ func (r *Router) RouteRequest(req *Request, resp *Response) {
 
 	resp.SetBody(html)
 	resp.SetStatus(HTTP_OK)
-	fmt.Println(resp.Header)
 	return
 }
 
