@@ -48,7 +48,7 @@ func (r *Router) RouteRequest(req *Request, resp *Response) {
 	route, err := r.MatchRoute(req.Header.Path)
 	if err != nil {
 		log.Println(err)
-		//TODO: write error response
+		resp.SetStatus(HTTP_NOT_FOUND)
 		return
 	}
 
@@ -58,7 +58,7 @@ func (r *Router) RouteRequest(req *Request, resp *Response) {
 		b, err := os.ReadFile(file)
 		if err != nil {
 			log.Printf("Failed reading file: %s. Error: %s", file, err.Error())
-			//TODO: write error response
+			resp.SetStatus(HTTP_INTERNAL_SEVER_ERROR)
 			return
 		}
 		html = string(b)
@@ -67,7 +67,7 @@ func (r *Router) RouteRequest(req *Request, resp *Response) {
 		b, err := os.ReadFile(file)
 		if err != nil {
 			log.Printf("Failed reading file: %s. Error: %s", file, err.Error())
-			//TODO: write error response
+			resp.SetStatus(HTTP_INTERNAL_SEVER_ERROR)
 			return
 		}
 		html = string(b)

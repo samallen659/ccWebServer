@@ -42,12 +42,14 @@ func (s *Server) Listen() error {
 
 func (s *Server) handleConnection(conn *net.TCPConn) {
 	defer conn.Close()
+	res := NewResponse()
 
 	b := make([]byte, 4096)
 	_, err := conn.Read(b)
 	if err != nil {
 		log.Println(err)
-		//TODO: write http error response
+		res.SetStatus(HTTP_INTERNAL_SEVER_ERROR)
+		conn.Write(res.Marshall())
 		return
 	}
 
@@ -56,11 +58,10 @@ func (s *Server) handleConnection(conn *net.TCPConn) {
 	req, err := NewRequest(reqStr)
 	if err != nil {
 		log.Println(err)
-		//TODO: write http error response
+		res.SetStatus(HTTP_BAD_REQUEST)
+		conn.Write(res.Marshall())
 		return
 	}
-
-	res := NewResponse()
 
 	s.router.RouteRequest(req, res)
 
